@@ -7,14 +7,19 @@ import "hardhat/console.sol";
 
 contract WavePortal {
     uint totalWaves;
-    
+    mapping(address => uint) wavesDict;
+
     constructor(){
         console.log("Wiii i'm a super smart contract");
     }
 
     function wave() public {
-        totalWaves +=1;
-        console.log("%s has waved!", msg.sender);
+        address senderAddrs;
+        senderAddrs = msg.sender;
+        wavesDict[senderAddrs]+=1;
+        console.log("User has waved us %d times",wavesDict[senderAddrs]);
+        totalWaves+=1;
+        console.log("%s has waved!", senderAddrs);
     }
 
     function getTotalWaves() view public returns(uint){

@@ -20,6 +20,12 @@ async function main() {
     await waveTxn.wait();
 
     waveCount = await waveContract.getTotalWaves();
+
+    //to test when someone wave us for the 2nd time:
+    waveTxn = await waveContract.connect(randomPerson).wave();
+    await waveTxn.wait();
+
+    waveCount = await waveContract.getTotalWaves();
 }
 
 main()
