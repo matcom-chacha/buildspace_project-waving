@@ -7,6 +7,7 @@ import "hardhat/console.sol";
 
 contract WavePortal {
     uint totalWaves;
+    
     constructor(){
         console.log("Wiii i'm a super smart contract");
     }
