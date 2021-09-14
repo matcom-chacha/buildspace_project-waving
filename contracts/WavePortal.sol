@@ -9,18 +9,38 @@ contract WavePortal {
     uint totalWaves;
     mapping(address => uint) wavesDict;
 
+    event NewWave(address indexed from, uint timestamp, string message);
+
+    struct Wave{
+        address waver;// the address of the person who waved
+        string message;// the message the user sent
+        uint timestamp;// the timestamp when the user waved
+    }
+
+    Wave[] waves;//to store the Waves received
+
     constructor(){
         console.log("Wiii i'm a super smart contract");
     }
 
-    function wave() public {
+    //this _message is the one our user send us from the frontend
+    function wave(string memory _message) public {
         address senderAddrs;
         senderAddrs = msg.sender;
         wavesDict[senderAddrs]+=1;
         console.log("User has waved us %d times",wavesDict[senderAddrs]);
         totalWaves+=1;
-        console.log("%s has waved!", senderAddrs);
+        console.log("%s has waved with messg: %s!", senderAddrs, _message);
+
+        waves.push(Wave(senderAddrs, _message, block.timestamp));
+
+        //google this
+        emit NewWave(senderAddrs, block.timestamp, _message);
     }
+
+    function getAllWaves() view public returns(Wave[] memory){
+        return waves;
+    }    
 
     function getTotalWaves() view public returns(uint){
         console.log("We have %d total waves", totalWaves);
