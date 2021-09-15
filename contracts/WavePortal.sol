@@ -8,6 +8,8 @@ import "hardhat/console.sol";
 contract WavePortal {
     uint totalWaves;
     mapping(address => uint) wavesDict;
+    uint private seed;
+    mapping(address => uint) public lastWavedAt;
 
     event NewWave(address indexed from, uint timestamp, string message);
 
@@ -27,6 +29,11 @@ contract WavePortal {
     function wave(string memory _message) public {
         address senderAddrs;
         senderAddrs = msg.sender;
+        
+        //We need to make sure the current timestamp is at least 15 min biger than the last time we stored
+        require(lastWavedAt[senderAddrs] + 15 minutes < block.timestamp,"Wait 15m");
+        lastWavedAt[senderAddrs] = block.timestamp;
+
         wavesDict[senderAddrs]+=1;
         console.log("User has waved us %d times",wavesDict[senderAddrs]);
         totalWaves+=1;
@@ -34,13 +41,23 @@ contract WavePortal {
 
         waves.push(Wave(senderAddrs, _message, block.timestamp));
 
-        //google this
+        //Generate a PSEUDO random number in the range 0-100
+        uint randomNumber = (block.difficulty + block.timestamp + seed)%100;
+        console.log("Random # generated: %s", randomNumber);
+
+        //Set the generated random number as the seed for the next wave
+        seed = randomNumber;
+
+        if(randomNumber < 50){
+            console.log("%s won!",senderAddrs);
+            uint priceAmount = 0.0001 ether;
+            require(priceAmount <= address(this).balance, "Trying to withdraw more money than the contract has");
+            (bool success,) = senderAddrs.call{value: priceAmount}("");
+            require(success, "Failed to withdraw money from contract.");    
+        }
+
+        // //google this
         emit NewWave(senderAddrs, block.timestamp, _message);
-        
-        uint priceAmount = 0.0001 ether;
-        require(priceAmount <= address(this).balance, "Trying to withdraw more money than the contract has");
-        (bool success,) = senderAddrs.call{value: priceAmount}("");
-        require(success, "Failed to withdraw money from contract.");    
     }
 
     function getAllWaves() view public returns(Wave[] memory){

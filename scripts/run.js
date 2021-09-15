@@ -9,17 +9,21 @@ async function main() {
     // console.log("Contract deployed by:", owner.address);
 
     let contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
-    console.log("COntract balance", hre.ethers.utils.formatEther(contractBalance));
+    console.log("Contract balance", hre.ethers.utils.formatEther(contractBalance));
 
-    let waveTxn = await waveContract.wave("A message");
+    let waveTxn = await waveContract.wave("Waving 1 time");
     await waveTxn.wait();//wait for txn to be mined
 
     //check if some ehters were withdraw from the contract
     contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
     console.log("Contract balance", hre.ethers.utils.formatEther(contractBalance));
 
-    // waveTxn = await waveContract.wave("Another message");
-    // await waveTxn.wait();
+    waveTxn = await waveContract.wave("Waving a 2nd time");
+    await waveTxn.wait();
+
+    //check if some ehters were withdraw from the contract
+    contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
+    console.log("Contract balance", hre.ethers.utils.formatEther(contractBalance));
 
     let allWaves = await waveContract.getAllWaves();
     console.log(allWaves);
