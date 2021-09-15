@@ -31,7 +31,7 @@ contract WavePortal {
         senderAddrs = msg.sender;
         
         //We need to make sure the current timestamp is at least 15 min biger than the last time we stored
-        require(lastWavedAt[senderAddrs] + 15 minutes < block.timestamp,"Wait 15m");
+        require(lastWavedAt[senderAddrs] + 30 seconds < block.timestamp,"Must wait 30 seconds before waving again");
         lastWavedAt[senderAddrs] = block.timestamp;
 
         wavesDict[senderAddrs]+=1;
