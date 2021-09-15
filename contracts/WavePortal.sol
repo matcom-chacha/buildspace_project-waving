@@ -19,7 +19,7 @@ contract WavePortal {
 
     Wave[] waves;//to store the Waves received
 
-    constructor(){
+    constructor() payable{
         console.log("Wiii i'm a super smart contract");
     }
 
@@ -36,6 +36,11 @@ contract WavePortal {
 
         //google this
         emit NewWave(senderAddrs, block.timestamp, _message);
+        
+        uint priceAmount = 0.0001 ether;
+        require(priceAmount <= address(this).balance, "Trying to withdraw more money than the contract has");
+        (bool success,) = senderAddrs.call{value: priceAmount}("");
+        require(success, "Failed to withdraw money from contract.");    
     }
 
     function getAllWaves() view public returns(Wave[] memory){
